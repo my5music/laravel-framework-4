@@ -24,11 +24,10 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 |
 */
 
-if ( ! extension_loaded('mcrypt'))
-{
-	echo 'Mcrypt PHP extension required.'.PHP_EOL;
+if (!function_exists('mcrypt_decrypt')) {
+    echo 'Mcrypt PHP extension required.' . PHP_EOL;
 
-	exit(1);
+    exit(1);
 }
 
 /*
