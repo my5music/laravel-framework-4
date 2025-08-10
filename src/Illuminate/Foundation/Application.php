@@ -537,7 +537,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 	 * @param  callable  $callback
 	 * @return void
 	 */
-	public function shutdown(callable $callback = null)
+	public function shutdown(?callable $callback = null)
 	{
 		if (is_null($callback))
 		{
