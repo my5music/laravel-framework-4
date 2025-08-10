@@ -1032,38 +1032,43 @@ if ( ! function_exists('with'))
 	}
 }
 
-if ( ! function_exists('is_serialized'))
+if (!function_exists('is_serialized'))
 {
-	/**
-	 * Check value to find if it was serialized.
-	 *
-	 * @param  mixed $value
-	 * @return bool
-	 */
-	function is_serialized($value)
-	{
-		if ( ! is_string($value))
-		{
-			return FALSE;
-		}
-		if ($value == 'N;')
-		{
-			return TRUE;
-		}
-		if (strlen($value) < 4)
-		{
-			return FALSE;
-		}
-		if ($value[1] !== ':')
-		{
-			return FALSE;
-		}
-		$lastc = substr($value, -1);
-		if ($lastc !== ';' && $lastc !== '}')
-		{
-			return FALSE;
-		}
+    /**
+     * Check value to find if it was serialized.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    function is_serialized($value)
+    {
+        if (!is_string($value))
+        {
+            return FALSE;
+        }
+
+        if ('N;' === $value)
+        {
+            return TRUE;
+        }
+
+        if (strlen($value) < 4)
+        {
+            return FALSE;
+        }
+
+        $secondChar = $value[1];
+
+        if (':' !== $secondChar) {
+            return FALSE;
+        }
+
+        $lastChar = $value[strlen($value) - 1];
+
+        if (!in_array($lastChar, ['}', ';'], true)) {
+            return FALSE;
+        }
 
 		return TRUE;
-	}
+    }
 }

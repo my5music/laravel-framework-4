@@ -52,7 +52,13 @@ class RedisStore extends TaggableStore implements StoreInterface {
 		{
 			if ( ! is_null($value = $this->connection()->get($this->prefix.$key)))
 			{
-				return is_numeric($value) ? $value : unserialize($value);
+                if (is_numeric($value)) {
+                    return $value;
+                }
+
+                return is_serialized($value)
+                    ? unserialize($value)
+                    : null;
 			}
 		} catch (\Predis\Connection\ConnectionException $e) {}
 	}
