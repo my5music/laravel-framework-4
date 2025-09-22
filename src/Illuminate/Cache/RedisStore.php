@@ -1,5 +1,6 @@
 <?php namespace Illuminate\Cache;
 
+use http\Exception\RuntimeException;
 use Illuminate\Redis\Database as Redis;
 
 class RedisStore extends TaggableStore implements StoreInterface {
@@ -50,16 +51,11 @@ class RedisStore extends TaggableStore implements StoreInterface {
 	{
 		try
 		{
-			if ( ! is_null($value = $this->connection()->get($this->prefix.$key)))
-			{
-                if (is_numeric($value)) {
-                    return $value;
-                }
-
+            if (!is_null($value = $this->connection()->get($this->prefix . $key))) {
                 return is_serialized($value)
                     ? unserialize($value)
                     : null;
-			}
+            }
 		} catch (\Predis\Connection\ConnectionException $e) {}
 	}
 
@@ -71,17 +67,16 @@ class RedisStore extends TaggableStore implements StoreInterface {
 	 * @param  int     $minutes
 	 * @return void
 	 */
-	public function put($key, $value, $minutes)
-	{
-		$value = is_numeric($value) ? $value : serialize($value);
+    public function put($key, $value, $minutes)
+    {
+        $value = serialize($value);
+        $minutes = max(1, $minutes);
 
-		$minutes = max(1, $minutes);
-
-		try
-		{
-			$this->connection()->setex($this->prefix.$key, $minutes * 60, $value);
-		} catch (\Predis\Connection\ConnectionException $e) {}
-	}
+        try {
+            $this->connection()->setex($this->prefix . $key, $minutes * 60, $value);
+        } catch (\Predis\Connection\ConnectionException $e) {
+        }
+    }
 
 	/**
 	 * Increment the value of an item in the cache.
@@ -92,10 +87,7 @@ class RedisStore extends TaggableStore implements StoreInterface {
 	 */
 	public function increment($key, $value = 1)
 	{
-		try
-		{
-			return $this->connection()->incrby($this->prefix.$key, $value);
-		} catch (\Predis\Connection\ConnectionException $e) {}
+		throw new RuntimeException('Not implemented.');
 	}
 
 	/**
@@ -107,10 +99,7 @@ class RedisStore extends TaggableStore implements StoreInterface {
 	 */
 	public function decrement($key, $value = 1)
 	{
-		try
-		{
-			return $this->connection()->decrby($this->prefix.$key, $value);
-		} catch (\Predis\Connection\ConnectionException $e) {}
+        throw new RuntimeException('Not implemented.');
 	}
 
 	/**
@@ -122,7 +111,7 @@ class RedisStore extends TaggableStore implements StoreInterface {
 	 */
 	public function forever($key, $value)
 	{
-		$value = is_numeric($value) ? $value : serialize($value);
+        $value = serialize($value);
 
 		try
 		{
